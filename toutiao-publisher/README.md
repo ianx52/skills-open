@@ -1,4 +1,4 @@
-# Toutiao Publisher v3.13.0
+# Toutiao Publisher v3.14.0
 
 头条内容发布全流程自动化Skill - 文章写好后的执行环节 = 配图生成 + 排版优化 + 一键发布。
 
@@ -88,6 +88,23 @@
 - 公众号发布流程详细版（12步+20项检查+7个常见问题）
 - 小红书/微博发布框架（后续详细开发）
 
+## v3.14.0核心升级
+
+**防排版崩坏硬性红线（2026-09-02）**：
+
+> **踩坑实录**：某篇长文发布后线上排版全乱——正文HTML残留大量编辑器专属标记（`class="ProseMirror"`、`syl-selected-card`×44、`mask`×26、518个嵌套`<div>`、33个`<img>`而实际只放了6张图）。根因是发布API的content取了**编辑器innerHTML**，编辑器自己运行能解析所以预览正常，但线上无编辑器运行时→排版全乱。
+>
+> **铁律：发布content必须用干净语义HTML，严禁用编辑器innerHTML直发。**
+
+新增 **§3.1.5 发布前HTML硬性校验5项**：
+1. 无编辑器专属标记（ProMirror/syl-/mask/templ/data-scu-ref）
+2. img数量==实际配图数
+3. 只用白名单标签（p/h2/blockquote/ul/ol/li/strong/em/img/hr/br）
+4. 无嵌套垃圾div
+5. 结构语义正确（h2小标题/blockquote金句/ul列表）
+
+任何一项不过→不发布，回炉重建干净HTML。发布后必须线上详情页复验。
+
 ## 功能特性
 
 - 🎨 **智能配图**：整合做图skill v3.1.1，10项必选元素+结构化Prompt+强化负面提示词+自动插入
@@ -121,7 +138,7 @@
 | ian-content-writer（写作skill） | v1.0.0 | 内容创作 | https://github.com/ianx52/ian-content-writer |
 | ian-illustration-master（做图skill） | v3.0.1 | 配图生成 | https://github.com/ianx52/ian-illustration-master |
 | ian-typography-master（排版skill） | v2.0.0 | 排版优化 | https://github.com/ianx52/ian-typography-master |
-| toutiao-publisher（发布助手skill） | v3.13.0 | 发布执行 | https://github.com/ianx52/toutiao-publisher |
+| toutiao-publisher（发布助手skill） | v3.14.0 | 发布执行 | https://github.com/ianx52/toutiao-publisher |
 
 **完整工作流**：写作skill（内容创作）→ 做图skill（配图生成）→ 排版skill（排版优化）→ 发布助手skill（上传发布）
 
@@ -154,7 +171,7 @@ IP角色：「小黑」（黑色实心小圆点，白点眼，细腿，有简单
 
 ```
 toutiao-publisher/
-├── SKILL.md              # Skill主文件，完整发布流程（v3.13.0）
+├── SKILL.md              # Skill主文件，完整发布流程（v3.14.0）
 ├── ILLUSTRATION_SKILL.md # 配图生成完整方法论（v3.1.1，同步自ian-illustration-master）
 ├── TYPOGRAPHY_SKILL.md   # 排版优化完整方法论（v2.0.0，同步自ian-typography-master）
 └── README.md             # 项目说明
@@ -177,9 +194,9 @@ toutiao-publisher/
 
 ## 版本信息
 
-- **版本**：v3.13.0
+- **版本**：v3.14.0
 - **创建日期**：2026-08-27
-- **更新日期**：2026-08-28
+- **更新日期**：2026-09-02
 - **作者**：兔仙人说AI
 - **适用平台**：今日头条（头条号）、公众号、小红书、微博
 - **定位**：文章写好后的执行环节 = 配图生成 + 排版优化 + 一键发布
@@ -200,7 +217,8 @@ toutiao-publisher/
   - v3.10.0：新增发布失败的自动恢复机制
   - v3.11.0：新增配图生成后自动插入到正确位置
   - v3.12.0：新增排版优化后自动应用到头条编辑器
-  - **v3.13.0：新增多平台发布支持（公众号详细流程+小红书/微博框架）**
+  - v3.13.0：新增多平台发布支持（公众号详细流程+小红书/微博框架）
+  - **v3.14.0：新增发布前HTML硬性校验5项（防排版崩坏红线）——编辑器innerHTML直发=排版必乱，发布content必须干净语义HTML**
 
 ## 许可证
 
